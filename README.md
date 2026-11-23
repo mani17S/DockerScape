@@ -17,7 +17,7 @@ flowchart LR
 | Component | Path | Role |
 |---|---|---|
 | Victim container | `victim/` | Simulates an escape attempt against a read-only host mount |
-| Falco + rules | `falco/rules/` | Custom rules, incl. `SYS_ADMIN` capability use and `/proc` mounts |
+| Falco + rules | `falco/rules/` | Custom rules: host-mount access, shell spawned in container, `SYS_ADMIN` capability, host `/proc` bind mount |
 | Forwarder | `falco/forwarder.sh` | Ships Falco's JSON alerts to the webhook |
 | Webhook | `webhook/` | Receives alerts and pauses the offending container via the Docker API |
 
@@ -29,6 +29,7 @@ Requires Docker with Compose, on a Linux host (Falco needs kernel access).
 git clone https://github.com/mani17S/DockerScape.git
 cd DockerScape
 chmod +x falco/forwarder.sh setup.sh
+mkdir -p host_share/etc && cp /etc/passwd host_share/etc/passwd   # file the victim tries to read
 docker compose up -d
 
 # Watch detections live
@@ -42,7 +43,7 @@ Tear down with `docker compose down`.
 
 ## Detection rules
 
-Rules live in `falco/rules/`. They cover behaviours typical of container breakouts, such as reading host files through a mount, using the `SYS_ADMIN` capability and mounting `/proc`. Edit `local_rules.yaml` to tune or extend them.
+Rules live in `falco/rules/`. Four rules in `local_rules.yaml` plus one in `escape_rules.yaml`: host-mount access (the simulated escape), interactive shell spawned in a container, containers started with `CAP_SYS_ADMIN`, and containers bind-mounting host `/proc`. Edit `local_rules.yaml` to tune or extend them.
 
 ## Limitations & next steps
 
