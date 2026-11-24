@@ -51,7 +51,7 @@ Rules live in `falco/rules/`. Four rules in `local_rules.yaml` plus one in `esca
 
 - Response is "pause container" only; no forensics capture before pausing.
 - Webhook has no authentication — acceptable on a lab network, not beyond it.
-- Planned: map each rule to a MITRE ATT&CK for Containers technique, and add a test that asserts every rule fires.
+- Planned: an automated test that asserts every rule fires (ATT&CK mapping is in [`docs/DESIGN.md`](docs/DESIGN.md)).
 
 ## Docs
 
