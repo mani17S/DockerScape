@@ -29,7 +29,7 @@ Requires Docker with Compose, on a Linux host (Falco needs kernel access).
 git clone https://github.com/mani17S/DockerScape.git
 cd DockerScape
 chmod +x falco/forwarder.sh setup.sh
-mkdir -p host_share/etc && cp /etc/passwd host_share/etc/passwd   # file the victim tries to read
+mkdir -p host_share/etc && echo 'root:x:0:0:root:/root:/bin/bash' > host_share/etc/passwd   # harmless sample file the victim reads
 docker compose up -d
 
 # Watch detections live
@@ -40,6 +40,8 @@ docker ps -a --filter name=victim-sim
 ```
 
 Tear down with `docker compose down`.
+
+> **Do not run `setup.sh` on this checkout.** It regenerates the lab's files from embedded copies and would overwrite later changes to the webhook and rules. Start the lab with `docker compose` as above.
 
 ## Detection rules
 
@@ -53,4 +55,5 @@ Rules live in `falco/rules/`. Four rules in `local_rules.yaml` plus one in `esca
 
 ## Docs
 
-See [`docs/`](docs/) for the day-wise log and report.
+- [`docs/DESIGN.md`](docs/DESIGN.md): architecture, what each rule means (with closest ATT&CK technique), threat model, limitations and next steps.
+- Related: [detection-engineering-lab](https://github.com/mani17S/detection-engineering-lab) has portable, unit-tested Sigma rules for the same container-escape behaviours.
